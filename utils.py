@@ -1,6 +1,11 @@
 from os import system, name
 import time
 
+class Attribute:
+    def __init__(self, culture, attribute, percent):
+        self.culture = culture
+        self.attribute = attribute
+        self.percent = percent
 
 def clear_screen():
     if name == 'nt':
