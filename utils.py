@@ -1,11 +1,21 @@
 from os import system, name
 import time
 
+
 class Attribute:
     def __init__(self, culture, attribute, percent):
         self.culture = culture
         self.attribute = attribute
         self.percent = percent
+
+
+def get_choice():
+    choice = input()
+    if(choice == "y" or choice == "yes"):
+        return True
+    elif(choice == "n" or choice == "no"):
+        return False
+
 
 def clear_screen():
     if name == 'nt':

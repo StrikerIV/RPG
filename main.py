@@ -64,62 +64,93 @@ def create_character():
         # if no error, show description of culture
 
         if(choice == 1):
-            print("\nThe Svec\n\nRuthless Vikings descendants of adventurers from Norway. Known for their ruthless\nstyle of war, they prefer bloodshed over diplomacy for peace.\n\n+20% Strength")
-            time.sleep(7)
+            print("\nThe Svec\n\nRuthless Vikings descendants of adventurers from Norway. Known for their ruthless\nstyle of war, they prefer bloodshed over diplomacy for peace.\n\n+20% Strength\n")
+            time.sleep(5)
+            print("Do you want to chose this culture? (y,n)")
+            choice = utils.get_choice()
+            if(choice):
+                octave2 += 1
+                octave1 += 2
+                attribute = utils.Attribute("Svec", "strength", 20)
+                return ((octave1, octave2), attribute)
+            else:
+                utils.clear_screen()
+                create_character()
         elif(choice == 2):
-            print("\nThe Baesken\n\nPeaceful fisherman from the rivers of the Northwest. Prideful of their vast\ndelicacies, they strive to be better than everyone else at cooking.\n\n+20% Cooking")
-            time.sleep(7)
+            print("\nThe Baesken\n\nPeaceful fisherman from the rivers of the Northwest. Prideful of their vast\ndelicacies, they strive to be better than everyone else at cooking.\n\n+20% Cooking\n")
+            time.sleep(5)
+            print("Do you want to chose this culture? (y,n)")
+            choice = utils.get_choice()
+            if(choice):
+                octave2 += 2
+                octave1 += 3
+                attribute = utils.Attribute("Baeskens", "cooking", 20)
+                return ((octave1, octave2), attribute)
+            else:
+                utils.clear_screen()
+                create_character()
         elif(choice == 3):
-            print("\nThe Thurber\n\nHardened blacksmiths from the mountains, they are strong and persevere.\nBe sure to know they won't back down without a fight, as they will always be ready.\n\n+20% Strength")
-            time.sleep(7)
+            print("\nThe Thurber\n\nHardened blacksmiths from the mountains, they are strong and persevere.\nBe sure to know they won't back down without a fight, as they will always be ready.\n\n+20% Strength\n")
+            time.sleep(5)
+            print("Do you want to chose this culture? (y,n)")
+            choice = utils.get_choice()
+            if(choice):
+                octave2 += 2
+                octave1 += 3
+                attribute = utils.Attribute("Thurber", "cooking", 20)
+                return ((octave1, octave2), attribute)
+            else:
+                utils.clear_screen()
+                create_character()
         elif(choice == 4):
-            print("\nThe Dueck\n\nFarmers from the hills of Italy, they are stadefast towards their religion.\nThey will fight to protect their faith, by any means, at any cost.\n\n+20% Charisma")
-            time.sleep(6)
+            print("\nThe Dueck\n\nFarmers from the hills of Italy, they are steadfast towards their religion.\nThey will fight to protect their faith, by any means, at any cost.\n\n+20% Charisma\n")
+            time.sleep(5)
+            print("Do you want to chose this culture? (y,n)")
+            choice = utils.get_choice()
+            if(choice):
+                octave2 += 2
+                octave1 += 3
+                attribute = utils.Attribute("Dueck", "cooking", 20)
+                return ((octave1, octave2), attribute)
+            else:
+                utils.clear_screen()
+                create_character()
         elif(choice == 5):
-            print("\nThe Obeng\n\nMasters of building, they come from the valleys of China. Skilled craftsman, they\nconstruct the most engineered buildings to date.\n\n+20% Intelligence")
-            time.sleep(7)
+            print("\nThe Obeng\n\nMasters of building, they come from the valleys of China. Skilled craftsman, they\nconstruct the most engineered buildings to date.\n\n+20% Intelligence\n")
+            time.sleep(5)
+            print("Do you want to chose this culture? (y,n)")
+            choice = utils.get_choice()
+            if(choice):
+                octave2 += 2
+                octave1 += 3
+                attribute = utils.Attribute("Obeng", "cooking", 20)
+                return ((octave1, octave2), attribute)
+            else:
+                utils.clear_screen()
+                create_character()
         elif(choice == 6):
-            print("\nThe Boastian\n\nComing from the foothills of Spain, these folk love dancing and well, showing off.\nBut when the time is right, they'll be as strong as giants.\n\n+20% Tactics")
-            time.sleep(7)
+            print("\nThe Boastian\n\nComing from the foothills of Spain, these folk love dancing and well, showing off.\nBut when the time is right, they'll be as strong as giants.\n\n+20% Tactics\n")
+            time.sleep(5)
+            print("Do you want to chose this culture? (y,n)")
+            choice = utils.get_choice()
+            if(choice):
+                octave2 += 2
+                octave1 += 3
+                attribute = utils.Attribute("Boastian", "cooking", 20)
+                return ((octave1, octave2), attribute)
+            else:
+                utils.clear_screen()
+                create_character()
         else:
             print("\nPlease supply a valid choice.")
             time.sleep(3)
-
-        utils.clear_screen()
-        create_character()
-    except ValueError:
-        # chose a culture
-        choice = choice.lower()
-
-        if(choice == "svec"):
-            octave2 += 1
-            octave1 += 2
-            attribute = utils.Attribute("Svec", "strength", 20)
-        elif(choice == "baeskens"):
-            octave2 += 2
-            octave1 += 3
-            attribute = utils.Attribute("Baeskens", "cooking", 20)
-        elif(choice == "thurber"):
-            octave2 += 3
-            octave1 += 4
-            attribute = utils.Attribute("Thurber", "strength", 20)
-        elif(choice == "dueck"):
-            octave2 += 4
-            octave1 += 5
-            attribute = utils.Attribute("Dueck", "charisma", 20)
-        elif(choice == "obeng"):
-            octave2 += 5
-            octave1 += 6
-            attribute = utils.Attribute("Obeng", "intelligence", 20)
-        elif(choice == "bostian"):
-            octave2 += 6
-            octave1 += 7
-            attribute = utils.Attribute("Bostian", "tactics", 20)
-        else:
-            print("\nPlease supply a valid choice.")
-            time.sleep(2)
             utils.clear_screen()
-            create_character()
+            return create_character()
+    except ValueError:
+        print("\nPlease supply a valid choice.")
+        time.sleep(2)
+        utils.clear_screen()
+        return create_character()
 
     return ((octave1, octave2), attribute)
 
@@ -157,5 +188,6 @@ def start_game():
     print("Are you ready to enter the world of Elderflame? Too bad. Here you go!")
     time.sleep(2)
     begin_game(data)
+
 
 main()
