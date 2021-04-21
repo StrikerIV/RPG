@@ -1,6 +1,7 @@
 from os import X_OK
 import numpy
 
+
 def convert():
     biomeLines = open("biome.pgm").readlines()
     terrainLines = open("terrain.pgm").readlines()
@@ -69,7 +70,6 @@ def convert():
         terrainArray[row][rowCount] = int(line.strip()) / maxlevel
         rowCount += 1
 
-
     #[",".join(item) for item in noiseArray.astype(str)]
     biomeCharacterArray = numpy.tile("|", (width, height))
     terrainCharacterArray = numpy.tile("|", (width, height))
@@ -88,39 +88,38 @@ def convert():
         for y in range(0, height):
             if(biomeArray[x][y] < ocean):
                 # ocean tile
-                biomeCharacterArray[x, y] = str(".")
+                biomeCharacterArray[x, y] = str("W")
             elif(biomeArray[x][y] < beach):
                 # beach tile, use secondary biome noise to disperse
                 if(terrainArray[x][y] < 0.75):
-                    biomeCharacterArray[x, y] = str("~")
+                    biomeCharacterArray[x, y] = str("S")
                 else:
-                    biomeCharacterArray[x, y] = str("!")
+                    biomeCharacterArray[x, y] = str("P")
             elif(biomeArray[x][y] <= plains):
                 if(terrainArray[x][y] < 0.175):
                     # swamp tile, inside forest files
-                    biomeCharacterArray[x, y] = str("=")
+                    biomeCharacterArray[x, y] = str("Q")
                 else:
                     # plains tile
-                    biomeCharacterArray[x, y] = str("!")
+                    biomeCharacterArray[x, y] = str("P")
             elif(biomeArray[x][y] <= forest):
                 # forest tile
-                biomeCharacterArray[x, y] = str("*")
+                biomeCharacterArray[x, y] = str("F")
             elif(biomeArray[x][y] <= taiga):
                 # taiga tile
-                biomeCharacterArray[x, y] = str("#")
+                biomeCharacterArray[x, y] = str("T")
             elif(biomeArray[x][y] <= hills):
                 # hills tile
-                biomeCharacterArray[x, y] = str("$")
+                biomeCharacterArray[x, y] = str("H")
             elif(biomeArray[x][y] <= snowy):
                 # snowy plains tile
-                biomeCharacterArray[x, y] = str("%")
+                biomeCharacterArray[x, y] = str("Y")
             elif(biomeArray[x][y] <= mountains):
                 # mountains tile
-                biomeCharacterArray[x, y] = str("&")
+                biomeCharacterArray[x, y] = str("M")
             else:
                 # snowy mountains tile
-                biomeCharacterArray[x, y] = str("@")
+                biomeCharacterArray[x, y] = str("A")
 
-
-    numpy.savetxt("biome.txt", biomeCharacterArray,
-                fmt='%s', delimiter=' ', newline='\n')
+    numpy.savetxt("biome.txt", biomeCharacterArray, fmt='%s', delimiter=' ', newline='\n')
+    return biomeCharacterArray

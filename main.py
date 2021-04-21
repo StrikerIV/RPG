@@ -66,8 +66,7 @@ def create_character():
         if(choice == 1):
             print("\nThe Svec\n\nRuthless Vikings descendants of adventurers from Norway. Known for their ruthless\nstyle of war, they prefer bloodshed over diplomacy for peace.\n\n+20% Strength\n")
             time.sleep(5)
-            print("Do you want to chose this culture? (y,n)")
-            choice = utils.get_choice()
+            choice = utils.get_choice("Do you want to chose this culture? (y,n) ")
             if(choice):
                 octave2 += 1
                 octave1 += 2
@@ -79,8 +78,7 @@ def create_character():
         elif(choice == 2):
             print("\nThe Baesken\n\nPeaceful fisherman from the rivers of the Northwest. Prideful of their vast\ndelicacies, they strive to be better than everyone else at cooking.\n\n+20% Cooking\n")
             time.sleep(5)
-            print("Do you want to chose this culture? (y,n)")
-            choice = utils.get_choice()
+            choice = utils.get_choice("Do you want to chose this culture? (y,n) ")
             if(choice):
                 octave2 += 2
                 octave1 += 3
@@ -92,8 +90,7 @@ def create_character():
         elif(choice == 3):
             print("\nThe Thurber\n\nHardened blacksmiths from the mountains, they are strong and persevere.\nBe sure to know they won't back down without a fight, as they will always be ready.\n\n+20% Strength\n")
             time.sleep(5)
-            print("Do you want to chose this culture? (y,n)")
-            choice = utils.get_choice()
+            choice = utils.get_choice("Do you want to chose this culture? (y,n) ")
             if(choice):
                 octave2 += 2
                 octave1 += 3
@@ -105,8 +102,7 @@ def create_character():
         elif(choice == 4):
             print("\nThe Dueck\n\nFarmers from the hills of Italy, they are steadfast towards their religion.\nThey will fight to protect their faith, by any means, at any cost.\n\n+20% Charisma\n")
             time.sleep(5)
-            print("Do you want to chose this culture? (y,n)")
-            choice = utils.get_choice()
+            choice = utils.get_choice("Do you want to chose this culture? (y,n) ")
             if(choice):
                 octave2 += 2
                 octave1 += 3
@@ -118,8 +114,7 @@ def create_character():
         elif(choice == 5):
             print("\nThe Obeng\n\nMasters of building, they come from the valleys of China. Skilled craftsman, they\nconstruct the most engineered buildings to date.\n\n+20% Intelligence\n")
             time.sleep(5)
-            print("Do you want to chose this culture? (y,n)")
-            choice = utils.get_choice()
+            choice = utils.get_choice("Do you want to chose this culture? (y,n) ")
             if(choice):
                 octave2 += 2
                 octave1 += 3
@@ -131,8 +126,7 @@ def create_character():
         elif(choice == 6):
             print("\nThe Boastian\n\nComing from the foothills of Spain, these folk love dancing and well, showing off.\nBut when the time is right, they'll be as strong as giants.\n\n+20% Tactics\n")
             time.sleep(5)
-            print("Do you want to chose this culture? (y,n)")
-            choice = utils.get_choice()
+            choice = utils.get_choice("Do you want to chose this culture? (y,n)")
             if(choice):
                 octave2 += 2
                 octave1 += 3
@@ -158,15 +152,18 @@ def create_character():
 def begin_game(data):
     # to begin, we create the map based on octaves and frequency
     utils.clear_screen()
-    print("Welcome to the world of Elderflame.")
+    print("Welcome.")
     time.sleep(2)
     print("Give us a moment to set up your world.\n")
     create_noise_map(data[0])
     print("Noise map generated. Starting conversion.")
-    convert()
+    world = convert()
     message = "Converted. Starting game."
     print(message)
     utils.ongoing(message, 3)
+    player = utils.spawn_player(world)
+    print(player)
+    game_terminal(world, player)
     # time.sleep(3)
     print(data)
 
@@ -174,7 +171,7 @@ def begin_game(data):
 def start_game():
     time.sleep(2)
     utils.clear_screen()
-    print("Welcome to Elderflame, a world of endless possibilities.\n")
+    print("Welcome to Elderflame.\n")
     time.sleep(3)
     print("I'm the narrator; you won't hear much from me but from this little conversation.")
     time.sleep(3)
@@ -186,8 +183,15 @@ def start_game():
     print("\nThe path of the %s is always a good choice.\n" % data[1].culture)
     time.sleep(4)
     print("Are you ready to enter the world of Elderflame? Too bad. Here you go!")
-    time.sleep(2)
+    time.sleep(4)
     begin_game(data)
 
 
-main()
+def game_terminal(world, player):
+    terrainAP = utils.get_terrain_around_player(world, player)
+    print(terrainAP)
+
+world = convert()
+player = utils.Player((95, 80))
+utils.get_terrain_around_player(world, player)
+#main()
