@@ -18,89 +18,46 @@ class Attribute:
         self.attribute = attribute
         self.percent = percent
 
-def insertChar(string, position, chartoinsert):
-    lenS = len(string)
-    string = string[:position] + chartoinsert + string[position:]
-    return string
+class Variables:
+    playerPosition = Player((0, 0))
+    currentlyTyping = ""
+    world = ""
 
 def get_terrain_around_player(world, player):
 
     pX = player.x
     pY = player.y
 
-    print("here", (pX, pY))
-    rangeAP = 5
-    countLength = (rangeAP * 2) + 1
-    aroundPA = np.tile("X", (countLength, countLength))
-
-    # now we loop and get the tiles within a 5 x 5 of the player (turns into 11 x 11 because of center block)
-    # we need to start in the upper left corner, and loop downwards
-
-    startPosIW = (pX - rangeAP, pY - rangeAP)
-    xCount = -1
-    yCount = -1
-
-    for x in range(startPosIW[0], startPosIW[0] + countLength):
-        xCount += 1
-        for y in range(startPosIW[0], startPosIW[0] + countLength):
-            # every time "y" loops it needs to go down a row, because that is the bounding box
-            # x and y values correspond to the world coordnents,
-            # xCount and yCound values correspond to aroundPA coords
-
-            yCount += 1
-
-            if(x < 0 or y < 0):
-                # out of bounds for world
-                aroundPA[xCount][yCount] = "X"
-            else:
-                aroundPA[xCount][yCount] = world[x][y]
-
-            if(yCount + 1 == 11):
-                # reset counter for next row because the current row is finished
-                yCount = -1
-
-    # now we have the view of the player, convert to multiline string and change colors of tiles, add the player in, and return
-    # the red dot represents the player
-    aroundPS = aroundPA.tostring()
-    aroundPS = aroundPS.decode("utf-8")
-    aroundPA[rangeAP][rangeAP] = "U"
-
-    print(format_terrain_lines(aroundPA[0].tostring().decode("utf-8")))
-    print("")
-    print(format_terrain_lines(aroundPA[1].tostring().decode("utf-8")))
-    print("")
-    print(format_terrain_lines(aroundPA[2].tostring().decode("utf-8")))
-    print("")
-    print(format_terrain_lines(aroundPA[3].tostring().decode("utf-8")))
-    print("")
-    print(format_terrain_lines(aroundPA[4].tostring().decode("utf-8")))
-    print("")
-    print(format_terrain_lines(aroundPA[5].tostring().decode("utf-8")))
-    print("")
-    print(format_terrain_lines(aroundPA[6].tostring().decode("utf-8")))
-    print("")
-    print(format_terrain_lines(aroundPA[7].tostring().decode("utf-8")))
-    print("")
-    print(format_terrain_lines(aroundPA[8].tostring().decode("utf-8")))
-    print("")
-    print(format_terrain_lines(aroundPA[9].tostring().decode("utf-8")))
-    print("")
-    print(format_terrain_lines(aroundPA[10].tostring().decode("utf-8")))
-    print("")
+    viewAroundPlayer = 5
+    aroundPlayerGridHeight = (viewAroundPlayer * 2) + 1
+    aroundPlayerGridWidth = (viewAroundPlayer * 2) + 1
+    aroundPlayerArray = np.tile("X", (aroundPlayerGridHeight, aroundPlayerGridWidth))
     
-    return aroundPA
+    startPositionInWorld = (pX - viewAroundPlayer, pY - viewAroundPlayer)
+    for xPos, rowOfTiles in enumerate(aroundPlayerArray):
+        for yPos, _ in enumerate(rowOfTiles):
+            aroundPlayerArray[xPos][yPos] = world[startPositionInWorld[0] + xPos][startPositionInWorld[1] + yPos]
 
-def format_terrain_lines(terrain):
+    aroundPlayerString = aroundPlayerArray.tostring()
+    aroundPlayerString = aroundPlayerString.decode("utf-8")
+    aroundPlayerArray[viewAroundPlayer][viewAroundPlayer] = "#"
+
+    for index, row in enumerate(aroundPlayerArray):
+        print(format_terrain_lines(index, world, row.tostring().decode("utf-8")))
+    
+    return aroundPlayerArray
+
+def format_terrain_lines(index, world, terrain):
     # given a "line" or "string" as terrain, we need to format it appropriately
     # we have a bunch of sub methods for each of the terrain elements
-
+    player = Variables.playerPosition
     try:
         terrain = re.sub("(X)", "%s%sX ⠀%s " % (fg('red'), bg('red'), attr('reset')), terrain)
         terrain = re.sub("(W)", "%s%sW ⠀%s " % (fg('blue'), bg('blue'), attr('reset')), terrain)
         terrain = re.sub("(S)", "%s%sS ⠀%s " % (fg('yellow_2'), bg('yellow_2'), attr('reset')), terrain)
         terrain = re.sub("(Q)", "%s%sQ ⠀%s " % (fg('dark_green'), bg('dark_green'), attr('reset')), terrain)
         terrain = re.sub("(P)", "%s%sP ⠀%s " % (fg('light_green'), bg('light_green'), attr('reset')), terrain)
-        terrain = re.sub("(F)", "%s%sF ⠀%s " % (fg('green_3b'), bg('green_3b'), attr('reset')), terrain)
+        terrain = re.sub("(F)", "%s%sF ⠀%s " % (fg('chartreuse_4'), bg('chartreuse_4'), attr('reset')), terrain)
         terrain = re.sub("(T)", "%s%sT ⠀%s " % (fg('orange_4b'), bg('orange_4b'), attr('reset')), terrain)
         terrain = re.sub("(H)", "%s%sH ⠀%s " % (fg('green_3b'), bg('green_3b'), attr('reset')), terrain)
         terrain = re.sub("(Y)", "%s%sY ⠀%s " % (fg('grey_82'), bg('grey_82'), attr('reset')), terrain)
@@ -108,11 +65,49 @@ def format_terrain_lines(terrain):
         terrain = re.sub("(A)", "%s%sA ⠀%s " % (fg('grey_93'), bg('grey_93'), attr('reset')), terrain)
 
         #then change color for player
-        terrain = re.sub("(U)", "%s%sU ⠀%s " % (fg('red'), bg('red'), attr('reset')), terrain)
+        terrain = re.sub("(#)", "%s%s# ⠀%s " % (fg('red'), bg('red'), attr('reset')), terrain)
+        
+        #then add new line afterward
+        if(index == 4):
+            terrain = terrain + "          Biome : %s\n" % (eval_tile(world[player.x][player.y]))
+        else:
+            terrain = terrain + "\n"
 
         return terrain
     except re.error:
         return terrain
+
+def eval_tile(tile):
+    if(tile == "W"):
+        # water tile
+        return "ocean"
+    elif(tile == "S"):
+        # sand tile
+        return "beach"
+    elif(tile == "P"):
+        # plains tile
+        return "plains"
+    elif(tile == "Q"):
+        # swamp tile
+        return "swamp"
+    elif(tile == "F"):
+        # forest tile
+        return "forest"
+    elif(tile == "T"):
+        # taiga tile
+        return "taiga"
+    elif(tile == "H"):
+        # hills tile
+        return "hills"
+    elif(tile == "Y"):
+        # snowy plains tile
+        return "snowy_plains"
+    elif(tile == "M"):
+        # mountains tile
+        return "mountains"
+    elif(tile == "A"):
+        # snowy mountains tile
+        return "snowy_mountains"
 
 def spawn_player(world):
     randomPosX = random.randrange(0, len(world[0]))
@@ -136,6 +131,9 @@ def get_choice(message):
     elif(choice == "n" or choice == "no"):
         return False
 
+def clear_above(lines):
+    for _ in range(0, lines):
+        print("\033[A                             \033[A")
 
 def clear_screen():
     if name == 'nt':
