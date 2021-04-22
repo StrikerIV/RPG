@@ -16,22 +16,35 @@ def move(args, world):
         return False
     elif(args[1] == "forward" or args[1] == "up"):
         # input was to move "up" / "forward"
+        if(playerX - 1 < 0):
+            # out of bounds
+            return True
         updatedPlayer = utils.Player((playerX - 1, playerY))
         utils.Variables.playerPosition = updatedPlayer
         #print(utils.Variables.playerPosition.x, utils.Variables.playerPosition.x)
         return True
     elif(args[1] == "back" or args[1] == "down"):
         # input was to move "back" / "down"
+        if(playerX + 1 == 500):
+            # out of bounds
+            return True
         updatedPlayer = utils.Player((playerX + 1, playerY))
         utils.Variables.playerPosition = updatedPlayer
         return True
     elif(args[1] == "left"):
         # input was to move "left"
+        if(playerY - 1 < 0):
+            # out of bounds
+            return True
         updatedPlayer = utils.Player((playerX, playerY - 1))
         utils.Variables.playerPosition = updatedPlayer
         return True
     elif(args[1] == "right"):
         # input was to move "right"
+        print(playerY)
+        if(playerY + 1 == 500):
+            # out of bounds
+            return True
         updatedPlayer = utils.Player((playerX, playerY + 1))
         utils.Variables.playerPosition = updatedPlayer
         return True

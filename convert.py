@@ -1,14 +1,10 @@
-from os import X_OK
 import numpy
 
 
 def convert():
     biomeLines = open("biome.pgm").readlines()
-    terrainLines = open("terrain.pgm").readlines()
+    foliageLines = open("foliage.pgm").readlines()
 
-    # print(pgmLines)
-
-    encoding = ""
     count = 0
     width = 0
     height = 0
@@ -18,12 +14,11 @@ def convert():
     rowCount = 0
 
     biomeArray = []
-    terrainArray = []
+    foliageArray = []
 
     for line in biomeLines:
         count += 1
         if(count == 1):
-            encoding = line.strip()
             continue
         if(count == 2):
             wh = line.strip().split(" ")
@@ -47,10 +42,9 @@ def convert():
     row = 0
     rowCount = 0
 
-    for line in terrainLines:
+    for line in foliageLines:
         count += 1
         if(count == 1):
-            encoding = line.strip()
             continue
         if(count == 2):
             wh = line.strip().split(" ")
@@ -60,19 +54,18 @@ def convert():
         if(count == 3):
             maxlevel = int(line.strip())
             # create empty array
-            terrainArray = numpy.tile(6.9, (width, height))
+            foliageArray = numpy.tile(6.9, (width, height))
             continue
 
         if(rowCount == width):
             row += 1
             rowCount = 0
 
-        terrainArray[row][rowCount] = int(line.strip()) / maxlevel
+        foliageArray[row][rowCount] = int(line.strip()) / maxlevel
         rowCount += 1
 
     #[",".join(item) for item in noiseArray.astype(str)]
     biomeCharacterArray = numpy.tile("|", (width, height))
-    terrainCharacterArray = numpy.tile("|", (width, height))
 
     # convert biome noise map to characters
     ocean = 0.50
@@ -91,12 +84,12 @@ def convert():
                 biomeCharacterArray[x, y] = str("W")
             elif(biomeArray[x][y] < beach):
                 # beach tile, use secondary biome noise to disperse
-                if(terrainArray[x][y] < 0.75):
+                if(foliageArray[x][y] < 0.75):
                     biomeCharacterArray[x, y] = str("S")
                 else:
                     biomeCharacterArray[x, y] = str("P")
             elif(biomeArray[x][y] <= plains):
-                if(terrainArray[x][y] < 0.175):
+                if(foliageArray[x][y] < 0.175):
                     # swamp tile, inside forest files
                     biomeCharacterArray[x, y] = str("Q")
                 else:

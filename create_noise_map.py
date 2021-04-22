@@ -1,9 +1,12 @@
 import sys
 from noise import pnoise2, snoise2
 
+# inital code came from 2dtexture.py example from noisepy on github 
+# https://github.com/caseman/noise/blob/master/examples/2dtexture.py
+
 def create_noise_map(octaves):
     biome = open("biome.pgm", 'wt')
-    terrain = open("terrain.pgm", 'wt')
+    foliage = open("foliage.pgm", 'wt')
 
     width = 500
     height = 500
@@ -13,10 +16,10 @@ def create_noise_map(octaves):
     biome.write('%s %s\n' % (width, height))
     biome.write('255\n')
 
-    terrainfreq = 20.0 * octaves[1]
-    terrain.write('P2\n')
-    terrain.write('%s %s\n' % (width, height))
-    terrain.write('255\n')
+    foliagefreq = 20.0 * octaves[1]
+    foliage.write('P2\n')
+    foliage.write('%s %s\n' % (width, height))
+    foliage.write('255\n')
 
     for y in range(width):
         for x in range(height):
@@ -25,8 +28,8 @@ def create_noise_map(octaves):
 
     for y in range(width):
         for x in range(height):
-            terrain.write("%s\n" % int(
-                snoise2(x / terrainfreq, y / terrainfreq, octaves[1]) * 127.0 + 128.0))
+            foliage.write("%s\n" % int(
+                snoise2(x / foliagefreq, y / foliagefreq, octaves[1]) * 127.0 + 128.0))
 
     biome.close()
-    terrain.close()
+    foliage.close()

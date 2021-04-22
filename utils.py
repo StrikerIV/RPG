@@ -21,14 +21,14 @@ class Attribute:
 class Variables:
     playerPosition = Player((0, 0))
     currentlyTyping = ""
-    world = ""
+    world = []
 
 def get_terrain_around_player(world, player):
 
     pX = player.x
     pY = player.y
 
-    viewAroundPlayer = 5
+    viewAroundPlayer = 7
     aroundPlayerGridHeight = (viewAroundPlayer * 2) + 1
     aroundPlayerGridWidth = (viewAroundPlayer * 2) + 1
     aroundPlayerArray = np.tile("X", (aroundPlayerGridHeight, aroundPlayerGridWidth))
@@ -36,7 +36,18 @@ def get_terrain_around_player(world, player):
     startPositionInWorld = (pX - viewAroundPlayer, pY - viewAroundPlayer)
     for xPos, rowOfTiles in enumerate(aroundPlayerArray):
         for yPos, _ in enumerate(rowOfTiles):
-            aroundPlayerArray[xPos][yPos] = world[startPositionInWorld[0] + xPos][startPositionInWorld[1] + yPos]
+            # check to see if indexe are out of bounds
+            if((startPositionInWorld[0] + xPos) < 0 or (startPositionInWorld[1] + yPos) < 0):
+                # out of bounds
+                aroundPlayerArray[xPos][yPos] = "X"
+            else:
+                #print(startPositionInWorld[0] + xPos, startPositionInWorld[1] + yPos)
+                try:
+                    aroundPlayerArray[xPos][yPos] = world[startPositionInWorld[0] + xPos][startPositionInWorld[1] + yPos]
+                except IndexError:
+                    # we have an index error, which occurs if the player view is attempting to enter the right and bottom boundaries
+                    # basically we use a counter now to determine how far to go
+                    aroundPlayerArray[xPos][yPos] = "X"
 
     aroundPlayerString = aroundPlayerArray.tostring()
     aroundPlayerString = aroundPlayerString.decode("utf-8")
@@ -78,7 +89,10 @@ def format_terrain_lines(index, world, terrain):
         return terrain
 
 def eval_tile(tile):
-    if(tile == "W"):
+    if(tile == "X"):
+        # out of bounds
+        return "OOB"
+    elif(tile == "W"):
         # water tile
         return "ocean"
     elif(tile == "S"):
@@ -113,9 +127,7 @@ def spawn_player(world):
     randomPosX = random.randrange(0, len(world[0]))
     randomPosY = random.randrange(0, len(world))
 
-    print(randomPosX, randomPosY)
     tileInWorld = world[randomPosX][randomPosY]
-    print(tileInWorld)
     if(tileInWorld == "."):
         # player has spawn in water, redo to get on land
         return spawn_player(world)

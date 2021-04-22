@@ -1,3 +1,4 @@
+import sys
 import time
 import utils
 import actions
@@ -168,6 +169,7 @@ def begin_game(data):
     create_noise_map(data[0])
     print("Noise map generated. Starting conversion.")
     world = convert()
+    utils.Variables.world = world
     message = "Converted. Starting game."
     print(message)
     utils.ongoing(message, 3)
@@ -211,6 +213,7 @@ def on_press(key):
     # this is the input function of the program
     # we give them the "pointer" and concat what they are typing onto it
     pointer = ("%s>%s" % (fg('white'), attr('reset')))
+    world = utils.Variables.world
     try:
         key = "{0}".format(key.char)
         utils.Variables.currentlyTyping += key
@@ -219,6 +222,9 @@ def on_press(key):
     except AttributeError:
         # key pressed was nonalphanumeric, check for movement.
         key = "{0}".format(key)
+        if(key == "Key.ctrl_l" or key == "key.ctrl_r"):
+            # control key, exit program
+            sys.exit()
         if(key == "Key.enter"):
             # execute whatever command is in terminal currently
             command = utils.Variables.currentlyTyping.split(" ")
@@ -310,7 +316,8 @@ def game_terminal(world, player):
 
 
 world = convert()
-player = utils.Player((95, 95))
+utils.Variables.world = world
+player = utils.Player((499, 499))
 #utils.get_terrain_around_player(world, player)
 game_terminal(world, player)
-# main()
+#main()
