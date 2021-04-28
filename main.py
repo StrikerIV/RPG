@@ -1,7 +1,11 @@
+import os
 import sys
 import time
+import json
 import utils
 import actions
+import numpy as np
+import generate_foliage as gf
 from convert import convert
 from colored import fg, attr, bg
 from pynput.keyboard import Listener
@@ -15,9 +19,10 @@ def main():
     print("|     Welcome.      |")
     print("+-------------------+")
     print("| 1. Start Game     |")
-    print("| 2. Help           |")
-    print("| 3. Credits        |")
-    print("| 4. Other projects |")
+    print("| 2. Load Game      |")
+    print("| 3. Help           |")
+    print("| 4. Credits        |")
+    print("| 5. Other projects |")
     print("+-------------------+\n")
 
     choice = input()
@@ -34,17 +39,40 @@ def main():
     if(choice == 1):
         start_game()
     elif(choice == 2):
-        print("\nget gud")
+        load_game()
     elif(choice == 3):
+        print("\nget gud")
+    elif(choice == 4):
         print("\n+------------------------------+")
         print("|           Credits            |")
         print("|      Made by StrikerIV       |")
         print("| https://github.com/StrikerIV |")
         print("+------------------------------+")
+    elif(choice == 5):
+        print("\n+--------------------------------+")
+        print("| See my other projects on Github! |")
+        print("|   https://github.com/StrikerIV   |")
+        print("+----------------------------------+")
 
     time.sleep(5)
     utils.clear_screen()
     return main()
+
+
+def get_name():
+    time.sleep(1)
+    utils.clear_screen()
+    time.sleep(1)
+    name = str(input("Who shall you be named? "))
+
+    if(os.path.isdir("saves/%s" % name)):
+        # there is already a saved game with this name, we ask them to use a different name
+        time.sleep(1)
+        print("\nThere is already a saved game by this name. Please chose a\ndifferent name, or restart the game and load from a save.")
+        time.sleep(5)
+        utils.clear_screen()
+
+    return name
 
 
 def create_character():
@@ -70,100 +98,96 @@ def create_character():
 
         if(choice == 1):
             print("\nThe Svec\n\nRuthless Vikings descendants of adventurers from Norway. Known for their ruthless\nstyle of war, they prefer bloodshed over diplomacy for peace.\n\n+20% Strength\n")
-            time.sleep(5)
+            time.sleep(2.5)
             choice = utils.get_choice(
                 "Do you want to chose this culture? (y,n) ")
             if(choice):
                 octave2 += 1
                 octave1 += 2
                 attribute = utils.Attribute("Svec", "strength", 20)
-                return ((octave1, octave2), attribute)
             else:
                 utils.clear_screen()
-                create_character()
+                return create_character()
         elif(choice == 2):
             print("\nThe Baesken\n\nPeaceful fisherman from the rivers of the Northwest. Prideful of their vast\ndelicacies, they strive to be better than everyone else at cooking.\n\n+20% Cooking\n")
-            time.sleep(5)
+            time.sleep(2.5)
             choice = utils.get_choice(
                 "Do you want to chose this culture? (y,n) ")
             if(choice):
                 octave2 += 2
                 octave1 += 3
                 attribute = utils.Attribute("Baeskens", "cooking", 20)
-                return ((octave1, octave2), attribute)
             else:
                 utils.clear_screen()
-                create_character()
+                return create_character()
         elif(choice == 3):
             print("\nThe Thurber\n\nHardened blacksmiths from the mountains, they are strong and persevere.\nBe sure to know they won't back down without a fight, as they will always be ready.\n\n+20% Strength\n")
-            time.sleep(5)
+            time.sleep(2.5)
             choice = utils.get_choice(
                 "Do you want to chose this culture? (y,n) ")
             if(choice):
                 octave2 += 2
                 octave1 += 3
-                attribute = utils.Attribute("Thurber", "cooking", 20)
-                return ((octave1, octave2), attribute)
+                attribute = utils.Attribute("Thurber", "strength", 20)
             else:
                 utils.clear_screen()
-                create_character()
+                return create_character()
         elif(choice == 4):
             print("\nThe Dueck\n\nFarmers from the hills of Italy, they are steadfast towards their religion.\nThey will fight to protect their faith, by any means, at any cost.\n\n+20% Charisma\n")
-            time.sleep(5)
+            time.sleep(2.5)
             choice = utils.get_choice(
                 "Do you want to chose this culture? (y,n) ")
             if(choice):
                 octave2 += 2
                 octave1 += 3
-                attribute = utils.Attribute("Dueck", "cooking", 20)
-                return ((octave1, octave2), attribute)
+                attribute = utils.Attribute("Dueck", "charisma", 20)
             else:
                 utils.clear_screen()
-                create_character()
+                return create_character()
         elif(choice == 5):
             print("\nThe Obeng\n\nMasters of building, they come from the valleys of China. Skilled craftsman, they\nconstruct the most engineered buildings to date.\n\n+20% Intelligence\n")
-            time.sleep(5)
+            time.sleep(2.5)
             choice = utils.get_choice(
                 "Do you want to chose this culture? (y,n) ")
             if(choice):
                 octave2 += 2
                 octave1 += 3
-                attribute = utils.Attribute("Obeng", "cooking", 20)
-                return ((octave1, octave2), attribute)
+                attribute = utils.Attribute("Obeng", "intelligence", 20)
             else:
                 utils.clear_screen()
-                create_character()
+                return create_character()
         elif(choice == 6):
             print("\nThe Boastian\n\nComing from the foothills of Spain, these folk love dancing and well, showing off.\nBut when the time is right, they'll be as strong as giants.\n\n+20% Tactics\n")
-            time.sleep(5)
+            time.sleep(2.5)
             choice = utils.get_choice(
-                "Do you want to chose this culture? (y,n)")
+                "Do you want to chose this culture? (y,n) ")
             if(choice):
                 octave2 += 2
                 octave1 += 3
-                attribute = utils.Attribute("Boastian", "cooking", 20)
-                return ((octave1, octave2), attribute)
+                attribute = utils.Attribute("Boastian", "tactics", 20)
             else:
                 utils.clear_screen()
-                create_character()
+                return create_character()
         else:
             print("\nPlease supply a valid choice.")
             time.sleep(3)
             utils.clear_screen()
             return create_character()
+
+        return ((octave1, octave2), attribute)
     except ValueError:
         print("\nPlease supply a valid choice.")
         time.sleep(2)
         utils.clear_screen()
         return create_character()
 
-    return ((octave1, octave2), attribute)
+    # culture has been chosen, now we ask for character name used in save file
 
 
 def begin_game(data):
     # to begin, we create the map based on octaves and frequency
     utils.clear_screen()
-    print("Welcome.")
+    print("Welcome to Elderflame, %s." % utils.Variables.playerName)
     time.sleep(2)
     print("Give us a moment to set up your world.\n")
     create_noise_map(data[0])
@@ -173,12 +197,10 @@ def begin_game(data):
     message = "Converted. Starting game."
     print(message)
     utils.ongoing(message, 3)
-    #generate_foilage(world)
+    gf.generate_foliage(world)
     player = utils.spawn_player(world)
-    print(player)
     game_terminal(world, player)
-    # time.sleep(3)
-    print(data)
+    time.sleep(3)
 
 
 def start_game():
@@ -194,20 +216,53 @@ def start_game():
     time.sleep(2)
     data = create_character()
     print("\nThe path of the %s is always a good choice.\n" % data[1].culture)
-    time.sleep(4)
-    print("Are you ready to enter the world of Elderflame? Too bad. Here you go!")
-    time.sleep(4)
+    time.sleep(2)
+    name = get_name()
+    utils.Variables.playerName = name
+    time.sleep(2)
+    utils.clear_screen()
+    time.sleep(1)
     begin_game(data)
 
 
+def load_game():
+    saves = os.listdir("saves/")
+
+    utils.clear_screen()
+    if(not saves):
+        # there are no saves, so we go back to main screen
+        print("There are currently no saved games.")
+    else:
+        print("Load a save by name - \n")
+
+        for index, save in enumerate(saves):
+            print("    %s. %s" % (index + 1, save))
+
+        saveChoice = str(input("\n\n"))
+
+        if(not saveChoice in saves):
+            # specified save is not a valid save, go back to load game
+            return load_game()
+        else:
+            # now we load the variables from the save and head to the game terminal
+            path = 'saves/%s' % saveChoice
+
+            utils.Variables.world = np.genfromtxt("%s/world.txt" % path, delimiter=" ", dtype=str)
+            
+            with open("%s/variables.json" % path) as variablesFile:
+                variables = json.loads(variablesFile.read())
+                pPosTuple = tuple(map(int, variables["playerPosition"].split(", ")))
+
+                utils.Variables.playerPosition = utils.Player((pPosTuple[0], pPosTuple[1]))
+                utils.Variables.currentlyTyping = variables['currentlyTyping']
+                utils.Variables.playerName = saveChoice
+                utils.Variables.inventory = variables['inventory']
+
+
+                time.sleep(2)
+                game_terminal(utils.Variables.world, utils.Variables.playerPosition)
+
 i = 0
-
-
-def execute(c):
-    exec('global i; i = %s' % c)
-    global i
-    return i
-
 
 def on_press(key):
     # this is the input function of the program
@@ -250,7 +305,17 @@ def on_press(key):
                     print("\033[A                             \033[A")
                     return True
                 else:
-                    return False               
+                    return False     
+            elif(command[0] == "save"):
+                worked = actions.save(world)
+                if(not worked):
+                    print("\nEror executing command %s." % command[0])
+                    time.sleep(3)
+                    print("\033[A                             \033[A")
+                    print("\033[A                             \033[A")
+                    return True
+                else:
+                    return False             
             else:
                 print("\nInvalid command.")
                 time.sleep(3)
@@ -258,7 +323,7 @@ def on_press(key):
                 print("\033[A                             \033[A")
                 utils.Variables.currentlyTyping = ""
                 return False
-        #     # it falls out and refreshes
+                # it falls out and refreshes
         elif(key == "Key.space"):
             utils.Variables.currentlyTyping += ' '
         elif(key == "Key.backspace"):
@@ -295,29 +360,22 @@ def game_terminal(world, player):
     while True:
         utils.clear_screen()  # clear screen cause we don't want uglyness
         player = utils.Variables.playerPosition
-        utils.get_terrain_around_player(world, player)  # print terrain
+        utils.get_terrain_around_player(True, world, player)  # print terrain
         print("\n\n\n\n%s>%s" % (fg('white'), attr('reset')))  # move down a few lines for the console input
 
         with Listener(on_press=on_press, on_release=on_release) as listener:
             listener.join()
 
-        # userInput = str(input(pointer + " "))  # actual input
-        # command = userInput.split(" ")
-
-        # if(command[0] == "move"):
-        #     # inputted command is move
-        #     # it default updates the player in the variables so no reassign needed.
-        #     worked = actions.move(command, world, player)
-        #     if(not worked):
-        #         print("Eror executing command %s." % command[0])
-        #         time.sleep(3)
-
-        #     # it falls out and refreshes
 
 
-world = convert()
-utils.Variables.world = world
-player = utils.Player((499, 499))
-#utils.get_terrain_around_player(world, player)
-game_terminal(world, player)
-#main()
+# world = convert()
+# utils.Variables.world = world
+# player = utils.Player((499, 499))
+# attribute = utils.Attribute("Obeng", "intelligence", 20)
+# utils.get_terrain_around_player(world, player)
+# game_terminal(world, player)
+# data = ((6, 4), attribute)
+# begin_game(data)
+# create_character()
+# get_name()
+main()
