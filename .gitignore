@@ -1,4 +1,7 @@
 __pycache__
+.vscode
+
+saves
 biome.txt
 foliage.txt
 biome.pgm

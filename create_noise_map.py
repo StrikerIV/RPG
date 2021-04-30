@@ -1,5 +1,4 @@
-import sys
-from noise import pnoise2, snoise2
+from noise import snoise2
 
 # inital code came from 2dtexture.py example from noise on github 
 # https://github.com/caseman/noise/blob/master/examples/2dtexture.py

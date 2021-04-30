@@ -368,14 +368,14 @@ def game_terminal(world, player):
 
 
 
-# world = convert()
+world = convert()
 # utils.Variables.world = world
-# player = utils.Player((499, 499))
+player = utils.Player((337, 297))
 # attribute = utils.Attribute("Obeng", "intelligence", 20)
 # utils.get_terrain_around_player(world, player)
-# game_terminal(world, player)
+game_terminal(world, player)
 # data = ((6, 4), attribute)
 # begin_game(data)
 # create_character()
 # get_name()
-main()
+# main()

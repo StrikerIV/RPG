@@ -52,7 +52,7 @@ def get_terrain_around_player(send, world, player):
     pX = player.x
     pY = player.y
 
-    viewAroundPlayer = 7
+    viewAroundPlayer = 10
     aroundPlayerGridHeight = (viewAroundPlayer * 2) + 1
     aroundPlayerGridWidth = (viewAroundPlayer * 2) + 1
     aroundPlayerArray = np.tile("X", (aroundPlayerGridHeight, aroundPlayerGridWidth))
@@ -70,17 +70,16 @@ def get_terrain_around_player(send, world, player):
                     aroundPlayerArray[xPos][yPos] = world[startPositionInWorld[0] + xPos][startPositionInWorld[1] + yPos]
                 except IndexError:
                     # we have an index error, which occurs if the player view is attempting to enter the right and bottom boundaries
-                    # we can just make it out of bounds as there are no tiles there
+                    # we make it out of bounds as there are no tiles there
                     aroundPlayerArray[xPos][yPos] = "X"
 
     aroundPlayerString = aroundPlayerArray.tostring()
     aroundPlayerString = aroundPlayerString.decode("utf-8")
-    aroundPlayerArray[viewAroundPlayer][viewAroundPlayer] = "#"
 
     if(send):
         # sending to terminal
         # we firstly need to render tree logs and leaves cause that is important
-        # leaves and logs are not scrictly saved, only the base tree positions is
+        # leaves and logs are not strictly saved, only the base tree position is
         treePositions = np.where(aroundPlayerArray == "%")
         for yPos in treePositions[0]:
             # indexes of arrays with trees
@@ -89,52 +88,55 @@ def get_terrain_around_player(send, world, player):
             for treeXPos in xPos:
                 render_tree(aroundPlayerArray, (yPos, treeXPos))
 
-        # if("%" in aroundPlayerArray):
-        #     treePosition = "%"
-        #     try:
-        #         # spawn base log
-        #         world
-        #     except RangeError:
-
         for index, row in enumerate(aroundPlayerArray):
-            print(format_terrain_lines(index, world, row.tostring().decode("utf-8")))
+            print(format_terrain_lines(index, world, row.tostring().decode("utf-8"), viewAroundPlayer))
 
         return aroundPlayerArray
     else:
         # returning for foliage most likely
         return aroundPlayerArray
 
-def format_terrain_lines(index, world, terrain):
+def format_terrain_lines(index, world, terrain, viewLen):
     # given a "line" or "string" as terrain, we need to format it appropriately
     # we have a bunch of sub methods for each of the terrain elements
     player = Variables.playerPosition
     try:
-
         # biomes
-        terrain = re.sub("(X)", "%s%sX ⠀%s " % (fg('red'), bg('red'), attr('reset')), terrain)
-        terrain = re.sub("(W)", "%s%sW ⠀%s " % (fg('blue'), bg('blue'), attr('reset')), terrain)
-        terrain = re.sub("(S)", "%s%sS ⠀%s " % (fg('yellow_2'), bg('yellow_2'), attr('reset')), terrain)
-        terrain = re.sub("(Q)", "%s%sQ ⠀%s " % (fg('orange_4a'), bg('orange_4a'), attr('reset')), terrain)
-        terrain = re.sub("(P)", "%s%sP ⠀%s " % (fg('light_green'), bg('light_green'), attr('reset')), terrain)
-        terrain = re.sub("(F)", "%s%sF ⠀%s " % (fg('chartreuse_4'), bg('chartreuse_4'), attr('reset')), terrain)
-        terrain = re.sub("(T)", "%s%sT ⠀%s " % (fg('orange_4b'), bg('orange_4b'), attr('reset')), terrain)
-        terrain = re.sub("(H)", "%s%sH ⠀%s " % (fg('green_3b'), bg('green_3b'), attr('reset')), terrain)
-        terrain = re.sub("(Y)", "%s%sY ⠀%s " % (fg('grey_82'), bg('grey_82'), attr('reset')), terrain)
-        terrain = re.sub("(M)", "%s%sM ⠀%s " % (fg('grey_50'), bg('grey_50'), attr('reset')), terrain)
-        terrain = re.sub("(A)", "%s%sA ⠀%s " % (fg('grey_93'), bg('grey_93'), attr('reset')), terrain)
+        terrain = re.sub("(X)", "%s%sX ⠀%s" % (fg('red'), bg('red'), attr('reset')), terrain)
+        terrain = re.sub("(W)", "%s%sW ⠀%s" % (fg('blue'), bg('blue'), attr('reset')), terrain)
+        terrain = re.sub("(S)", "%s%sS ⠀%s" % (fg('yellow_2'), bg('yellow_2'), attr('reset')), terrain)
+        terrain = re.sub("(Q)", "%s%sQ ⠀%s" % (fg('orange_4a'), bg('orange_4a'), attr('reset')), terrain)
+        terrain = re.sub("(P)", "%s%sP ⠀%s" % (fg('light_green'), bg('light_green'), attr('reset')), terrain)
+        terrain = re.sub("(F)", "%s%sF ⠀%s" % (fg('chartreuse_4'), bg('chartreuse_4'), attr('reset')), terrain)
+        terrain = re.sub("(T)", "%s%sT ⠀%s" % (fg('orange_4b'), bg('orange_4b'), attr('reset')), terrain)
+        terrain = re.sub("(H)", "%s%sH ⠀%s" % (fg('green_3b'), bg('green_3b'), attr('reset')), terrain)
+        terrain = re.sub("(Y)", "%s%sY ⠀%s" % (fg('grey_82'), bg('grey_82'), attr('reset')), terrain)
+        terrain = re.sub("(M)", "%s%sM ⠀%s" % (fg('grey_50'), bg('grey_50'), attr('reset')), terrain)
+        terrain = re.sub("(A)", "%s%sA ⠀%s" % (fg('grey_93'), bg('grey_93'), attr('reset')), terrain)
 
         # render tree stuff
-        terrain = re.sub("(C)", "%s%s^ ⠀%s " % (fg('dark_orange_3a'), bg('dark_orange_3a'), attr('reset')), terrain)
-        terrain = re.sub("(&)", "%s%s& ⠀%s " % (fg('dark_green'), bg('dark_green'), attr('reset')), terrain)  
+        terrain = re.sub("(C)", "%s%s^ ⠀%s" % (fg('dark_orange_3a'), bg('dark_orange_3a'), attr('reset')), terrain)
+        terrain = re.sub("(&)", "%s%s& ⠀%s" % (fg('dark_green'), bg('dark_green'), attr('reset')), terrain)  
         
-        # then change color for player
-        terrain = re.sub("(#)", "%s%s# ⠀%s " % (fg('red'), bg('red'), attr('reset')), terrain)
-        
+        # then change color for player in the center of the view
+        # we know that the player must be in the middle, so we use the viewLen to place them
+        # however, the terrain is strings so we must use the supplied index to determine where we are
+        terrain = terrain.split()
+
+        if((index + 1) % viewLen == 0 and not index == ((viewLen)* 2 - 1)):
+            # "torso" of player
+            # loop through characters until we get to the viewLen'th character
+            terrain[viewLen] = '⠀\x1b[0m\x00\x00\x00\x1b[38;5;33m\x1b[48;5;33m#'
+        elif ((index) % viewLen == 0 and not index == 0 and not index == viewLen * 2):
+            terrain[viewLen] = '⠀\x1b[0m\x00\x00\x00\x1b[38;5;3m\x1b[48;5;3m#'
+            #print([terrain])
         # then add on corrds and biome stuff
+        terrain = ''.join(terrain)
+
         if(index == 4):
-            terrain = terrain + "          Biome : %s\n" % (eval_tile(world[player.x][player.y]))
+            terrain = terrain + "          Biome : %s" % (eval_tile(world[player.x][player.y]))
         else:
-            terrain = terrain + "\n"
+            terrain = terrain
 
         return terrain
     except re.error:

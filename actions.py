@@ -100,6 +100,7 @@ def save(world):
 
     # save variables
     with open('%s/variables.json' % path, 'w') as variablesFile:
+        
         pPos = utils.Variables.playerPosition
         playerPosition = "%s, %s" %(pPos.x, pPos.y)
         currentlyTyping = utils.Variables.currentlyTyping
