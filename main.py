@@ -1,4 +1,5 @@
 import os
+from random import randint
 import sys
 import time
 import json
@@ -194,6 +195,7 @@ def begin_game(data):
     print("Noise map generated. Starting conversion.")
     world = convert()
     utils.Variables.world = world
+    utils.Variables.ogWorld = world
     message = "Converted. Starting game."
     print(message)
     utils.ongoing(message, 3)
@@ -263,17 +265,45 @@ def load_game():
                 game_terminal(utils.Variables.world, utils.Variables.playerPosition)
 
 i = 0
+currentlyTyping = False
 
 def on_press(key):
     # this is the input function of the program
     # we give them the "pointer" and concat what they are typing onto it
     pointer = ("%s>%s" % (fg('white'), attr('reset')))
     world = utils.Variables.world
+
+    global currentlyTyping
+    print(getattr(utils.Variables.inventory, "logs", None))
     try:
         key = "{0}".format(key.char)
-        utils.Variables.currentlyTyping += key
-        print("\033[A                             \033[A")
-        print(pointer + " {0}".format(utils.Variables.currentlyTyping))
+        if(key == "T" or key =="t" or currentlyTyping):
+            currentlyTyping = True
+            utils.Variables.currentlyTyping += key
+            print("\033[A                             \033[A")
+            print(pointer + " {0}".format(utils.Variables.currentlyTyping))
+        elif(key == "E" or key == "e"):
+            # use key
+            # evaluate tile beneath the player to know what to do
+            player = utils.Variables.playerPosition
+            tileBelowPlayer = utils.eval_tile(world[player.x][player.y])
+            world = utils.Variables.world
+
+            if(tileBelowPlayer == "tree"):
+                # use key on tree, we chop 
+                # add logs to inventory then remove tree
+                if(getattr(utils.Variables.inventory, "logs", None) == None):
+                    # no trees stored in inventory
+                    print("here")
+                    utils.Variables.inventory['logs'] = randint(1, 4)
+                else:
+                    print("here2")
+                    utils.Variables.inventory['logs'] += randint(1, 4)
+
+                # then reset tile as tree is gone
+                world[player.x][player.y] = "F"
+                utils.Variables.world = world
+                return False
     except AttributeError:
         # key pressed was nonalphanumeric, check for movement.
         key = "{0}".format(key)
@@ -282,6 +312,7 @@ def on_press(key):
             sys.exit()
         if(key == "Key.enter"):
             # execute whatever command is in terminal currently
+            currentlyTyping = False
             command = utils.Variables.currentlyTyping.split(" ")
             utils.Variables.currentlyTyping = ""
             if(command[0] == "move"):
@@ -360,6 +391,7 @@ def game_terminal(world, player):
     while True:
         utils.clear_screen()  # clear screen cause we don't want uglyness
         player = utils.Variables.playerPosition
+        world = utils.Variables.world
         utils.get_terrain_around_player(True, world, player)  # print terrain
         print("\n\n\n\n%s>%s" % (fg('white'), attr('reset')))  # move down a few lines for the console input
 
@@ -368,14 +400,14 @@ def game_terminal(world, player):
 
 
 
-world = convert()
+# world = convert()
 # utils.Variables.world = world
-player = utils.Player((337, 297))
-# attribute = utils.Attribute("Obeng", "intelligence", 20)
+#player = utils.Player((337, 297))
+attribute = utils.Attribute("Obeng", "intelligence", 20)
 # utils.get_terrain_around_player(world, player)
-game_terminal(world, player)
-# data = ((6, 4), attribute)
-# begin_game(data)
+# game_terminal(world, player)
+data = ((6, 4), attribute)
+begin_game(data)
 # create_character()
 # get_name()
-# main()
+#main()

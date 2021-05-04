@@ -34,6 +34,10 @@ def chop(world):
         return
 
     # remove tree from world, then add 3 logs to their inventory
+    inventory = json.loads(utils.Variables.inventory)
+    inventory['logCount'] += 3
+
+    
     return True
 
 def move(args, world):
@@ -100,7 +104,7 @@ def save(world):
 
     # save variables
     with open('%s/variables.json' % path, 'w') as variablesFile:
-        
+
         pPos = utils.Variables.playerPosition
         playerPosition = "%s, %s" %(pPos.x, pPos.y)
         currentlyTyping = utils.Variables.currentlyTyping

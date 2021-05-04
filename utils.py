@@ -22,7 +22,10 @@ class Variables:
     playerPosition = Player((0, 0))
     currentlyTyping = ""
     playerName = ""
-    inventory = []
+    inventory = {
+        "logs": 0
+    }
+    ogWorld = []
     world = []
 
 def render_tree(view, position):
@@ -52,7 +55,7 @@ def get_terrain_around_player(send, world, player):
     pX = player.x
     pY = player.y
 
-    viewAroundPlayer = 10
+    viewAroundPlayer = 5
     aroundPlayerGridHeight = (viewAroundPlayer * 2) + 1
     aroundPlayerGridWidth = (viewAroundPlayer * 2) + 1
     aroundPlayerArray = np.tile("X", (aroundPlayerGridHeight, aroundPlayerGridWidth))
@@ -143,6 +146,8 @@ def format_terrain_lines(index, world, terrain, viewLen):
         return terrain
 
 def eval_tile(tile):
+
+    # eval biomes
     if(tile == "X"):
         # out of bounds
         return "OOB"
@@ -176,6 +181,10 @@ def eval_tile(tile):
     elif(tile == "A"):
         # snowy mountains tile
         return "snowy_mountains"
+
+    # eval other tiles
+    if(tile == "%"):
+        return "tree"
 
 def spawn_player(world):
     randomPosX = random.randrange(0, len(world[0]))
