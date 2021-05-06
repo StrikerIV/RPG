@@ -1,5 +1,6 @@
 from colored import fg, bg, attr
 from os import system, name
+import json
 import numpy as np
 import random
 import time
@@ -55,7 +56,7 @@ def get_terrain_around_player(send, world, player):
     pX = player.x
     pY = player.y
 
-    viewAroundPlayer = 5
+    viewAroundPlayer = 10
     aroundPlayerGridHeight = (viewAroundPlayer * 2) + 1
     aroundPlayerGridWidth = (viewAroundPlayer * 2) + 1
     aroundPlayerArray = np.tile("X", (aroundPlayerGridHeight, aroundPlayerGridWidth))
@@ -136,8 +137,26 @@ def format_terrain_lines(index, world, terrain, viewLen):
         # then add on corrds and biome stuff
         terrain = ''.join(terrain)
 
+        inventoryArray = []
+        jsonInv = json.loads(json.dumps(Variables.inventory))
+
         if(index == 4):
+            # tell biome
             terrain = terrain + "          Biome : %s" % (eval_tile(world[player.x][player.y]))
+        elif(index == 5):
+            # tell coords
+            terrain = terrain + "          X, Z : %s, %s" % (player.x, player.y)
+        elif(index == 7):
+            # start of inventory
+            terrain = terrain + "          Inventory : "
+        elif(index >= 8 and index <= 15):
+            try:      
+                for key in jsonInv:
+                    inventoryArray.append("%s %s" % (str(jsonInv[key]), str(key)))
+
+                terrain = terrain + "              %s" % inventoryArray[index - 8]
+            except:
+                pass
         else:
             terrain = terrain
 

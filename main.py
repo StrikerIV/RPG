@@ -274,7 +274,7 @@ def on_press(key):
     world = utils.Variables.world
 
     global currentlyTyping
-    print(getattr(utils.Variables.inventory, "logs", None))
+
     try:
         key = "{0}".format(key.char)
         if(key == "T" or key =="t" or currentlyTyping):
@@ -292,13 +292,7 @@ def on_press(key):
             if(tileBelowPlayer == "tree"):
                 # use key on tree, we chop 
                 # add logs to inventory then remove tree
-                if(getattr(utils.Variables.inventory, "logs", None) == None):
-                    # no trees stored in inventory
-                    print("here")
-                    utils.Variables.inventory['logs'] = randint(1, 4)
-                else:
-                    print("here2")
-                    utils.Variables.inventory['logs'] += randint(1, 4)
+                utils.Variables.inventory['logs'] += randint(3, 4)
 
                 # then reset tile as tree is gone
                 world[player.x][player.y] = "F"
@@ -400,14 +394,4 @@ def game_terminal(world, player):
 
 
 
-# world = convert()
-# utils.Variables.world = world
-#player = utils.Player((337, 297))
-attribute = utils.Attribute("Obeng", "intelligence", 20)
-# utils.get_terrain_around_player(world, player)
-# game_terminal(world, player)
-data = ((6, 4), attribute)
-begin_game(data)
-# create_character()
-# get_name()
-#main()
+main()

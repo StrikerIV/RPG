@@ -4,42 +4,6 @@ import utils
 import numpy as np
 from pathlib import Path
 
-def chop(world):
-    # chop down tree
-    player = utils.Variables.playerPosition
-
-    pX = player.x
-    pY = player.y
-
-    # use the same method to get a 1x1 around player
-    viewAroundPlayer = 1
-    aroundPlayerGridHeight = (viewAroundPlayer * 2) + 1
-    aroundPlayerGridWidth = (viewAroundPlayer * 2) + 1
-    aroundPlayerArray = np.tile("X", (aroundPlayerGridHeight, aroundPlayerGridWidth))
-    
-    startPositionInWorld = (pX - viewAroundPlayer, pY - viewAroundPlayer)
-    for xPos, rowOfTiles in enumerate(aroundPlayerArray):
-        for yPos, _ in enumerate(rowOfTiles):
-            if((startPositionInWorld[0] + xPos) < 0 or (startPositionInWorld[1] + yPos) < 0):
-                aroundPlayerArray[xPos][yPos] = "X"
-            else:
-                try:
-                    aroundPlayerArray[xPos][yPos] = world[startPositionInWorld[0] + xPos][startPositionInWorld[1] + yPos]
-                except IndexError:
-                    aroundPlayerArray[xPos][yPos] = "X"
-
-    # check to see if tree in "view"
-    if(not np.where(aroundPlayerArray == "%")[0][0]):
-        # no tree in range of player, return
-        return
-
-    # remove tree from world, then add 3 logs to their inventory
-    inventory = json.loads(utils.Variables.inventory)
-    inventory['logCount'] += 3
-
-    
-    return True
-
 def move(args, world):
     # this is the function that actually moves the character around
     # it's quite simple, depending on where they move we edit the x / y values 
