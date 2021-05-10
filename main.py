@@ -104,7 +104,7 @@ def create_character():
                 "Do you want to chose this culture? (y,n) ")
             if(choice):
                 octave2 += 1
-                octave1 += 2
+                octave1 += 3
                 attribute = utils.Attribute("Svec", "strength", 20)
             else:
                 utils.clear_screen()
@@ -116,7 +116,7 @@ def create_character():
                 "Do you want to chose this culture? (y,n) ")
             if(choice):
                 octave2 += 2
-                octave1 += 3
+                octave1 += 1
                 attribute = utils.Attribute("Baeskens", "cooking", 20)
             else:
                 utils.clear_screen()
@@ -127,8 +127,8 @@ def create_character():
             choice = utils.get_choice(
                 "Do you want to chose this culture? (y,n) ")
             if(choice):
-                octave2 += 2
-                octave1 += 3
+                octave2 += 3
+                octave1 += 1
                 attribute = utils.Attribute("Thurber", "strength", 20)
             else:
                 utils.clear_screen()
@@ -140,7 +140,7 @@ def create_character():
                 "Do you want to chose this culture? (y,n) ")
             if(choice):
                 octave2 += 2
-                octave1 += 3
+                octave1 += 2
                 attribute = utils.Attribute("Dueck", "charisma", 20)
             else:
                 utils.clear_screen()
@@ -151,8 +151,8 @@ def create_character():
             choice = utils.get_choice(
                 "Do you want to chose this culture? (y,n) ")
             if(choice):
-                octave2 += 2
-                octave1 += 3
+                octave2 += 1
+                octave1 += 4
                 attribute = utils.Attribute("Obeng", "intelligence", 20)
             else:
                 utils.clear_screen()
@@ -163,7 +163,7 @@ def create_character():
             choice = utils.get_choice(
                 "Do you want to chose this culture? (y,n) ")
             if(choice):
-                octave2 += 2
+                octave2 += 5
                 octave1 += 3
                 attribute = utils.Attribute("Boastian", "tactics", 20)
             else:
@@ -278,26 +278,35 @@ def on_press(key):
     try:
         key = "{0}".format(key.char)
         if(key == "T" or key =="t" or currentlyTyping):
+            if(currentlyTyping):
+                # after pressing chat key it starts adding characters
+                utils.Variables.currentlyTyping += key
             currentlyTyping = True
-            utils.Variables.currentlyTyping += key
             print("\033[A                             \033[A")
             print(pointer + " {0}".format(utils.Variables.currentlyTyping))
+        elif(key == "Q" or key == "q"):
+            action = actions.destroy()
+            return False
         elif(key == "E" or key == "e"):
-            # use key
-            # evaluate tile beneath the player to know what to do
-            player = utils.Variables.playerPosition
-            tileBelowPlayer = utils.eval_tile(world[player.x][player.y])
-            world = utils.Variables.world
+            action = actions.place()
+            return False
+        elif(key == "W" or key == "w"):
+            command = ["move", "forward"]
+            actions.move(command, world)
+            return False
+        elif(key == "S" or key == "s"):
+            command = ["move", "down"]
+            actions.move(command, world)
+            return False
+        elif(key == "A" or key == "a"):
+            command = ["move", "left"]
+            actions.move(command, world)
+            return False
+        elif(key == "D" or key == "d"):
+            command = ["move", "right"]
+            actions.move(command, world)
+            return False
 
-            if(tileBelowPlayer == "tree"):
-                # use key on tree, we chop 
-                # add logs to inventory then remove tree
-                utils.Variables.inventory['logs'] += randint(3, 4)
-
-                # then reset tile as tree is gone
-                world[player.x][player.y] = "F"
-                utils.Variables.world = world
-                return False
     except AttributeError:
         # key pressed was nonalphanumeric, check for movement.
         key = "{0}".format(key)
@@ -340,15 +349,10 @@ def on_press(key):
                     print("\033[A                             \033[A")
                     return True
                 else:
-                    return False             
-            else:
-                print("\nInvalid command.")
-                time.sleep(3)
-                print("\033[A                             \033[A")
-                print("\033[A                             \033[A")
-                utils.Variables.currentlyTyping = ""
-                return False
-                # it falls out and refreshes
+                    return False          
+            elif(command[0] == "exit" or command[0] == "quit"):
+                actions.save(world)  
+                os._exit(1)
         elif(key == "Key.space"):
             utils.Variables.currentlyTyping += ' '
         elif(key == "Key.backspace"):
@@ -356,20 +360,12 @@ def on_press(key):
             print("\033[A                             \033[A")
             print(pointer + " {0}".format(utils.Variables.currentlyTyping))
         elif(key == "Key.up"):
-            command = ["move", "forward"]
-            actions.move(command, world)
+            if(utils.Variables.currentlyUsing == 0): return
+            utils.Variables.currentlyUsing -= 1
             return False
         elif(key == "Key.down"):
-            command = ["move", "down"]
-            actions.move(command, world)
-            return False
-        elif(key == "Key.left"):
-            command = ["move", "left"]
-            actions.move(command, world)
-            return False
-        elif(key == "Key.right"):
-            command = ["move", "right"]
-            actions.move(command, world)
+            if(utils.Variables.currentlyUsing == 5): return
+            utils.Variables.currentlyUsing += 1
             return False
 
 

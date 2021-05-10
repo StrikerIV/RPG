@@ -22,8 +22,14 @@ class Attribute:
 class Variables:
     playerPosition = Player((0, 0))
     currentlyTyping = ""
+    currentlyUsing = 0
     playerName = ""
     inventory = {
+        "stone": 0,
+        "dirt": 0,
+        "podzol": 0,
+        "snow": 0,
+        "sand": 0,
         "logs": 0
     }
     ogWorld = []
@@ -113,11 +119,14 @@ def format_terrain_lines(index, world, terrain, viewLen):
         terrain = re.sub("(P)", "%s%sP ⠀%s" % (fg('light_green'), bg('light_green'), attr('reset')), terrain)
         terrain = re.sub("(F)", "%s%sF ⠀%s" % (fg('chartreuse_4'), bg('chartreuse_4'), attr('reset')), terrain)
         terrain = re.sub("(T)", "%s%sT ⠀%s" % (fg('orange_4b'), bg('orange_4b'), attr('reset')), terrain)
-        terrain = re.sub("(H)", "%s%sH ⠀%s" % (fg('green_3b'), bg('green_3b'), attr('reset')), terrain)
+        terrain = re.sub("(H)", "%s%sH ⠀%s" % (fg('grey_74'), bg('grey_74'), attr('reset')), terrain)
         terrain = re.sub("(Y)", "%s%sY ⠀%s" % (fg('grey_82'), bg('grey_82'), attr('reset')), terrain)
         terrain = re.sub("(M)", "%s%sM ⠀%s" % (fg('grey_50'), bg('grey_50'), attr('reset')), terrain)
         terrain = re.sub("(A)", "%s%sA ⠀%s" % (fg('grey_93'), bg('grey_93'), attr('reset')), terrain)
 
+        # other "blocks"
+        terrain = re.sub("(U)", "%s%sU ⠀%s" % (fg('black'), bg('black'), attr('reset')), terrain)
+        terrain = re.sub("(I)", "%s%sI ⠀%s" % (fg('dark_orange_3a'), bg('dark_orange_3a'), attr('reset')), terrain)
         # render tree stuff
         terrain = re.sub("(C)", "%s%s^ ⠀%s" % (fg('dark_orange_3a'), bg('dark_orange_3a'), attr('reset')), terrain)
         terrain = re.sub("(&)", "%s%s& ⠀%s" % (fg('dark_green'), bg('dark_green'), attr('reset')), terrain)  
@@ -142,7 +151,7 @@ def format_terrain_lines(index, world, terrain, viewLen):
 
         if(index == 4):
             # tell biome
-            terrain = terrain + "          Biome : %s" % (eval_tile(world[player.x][player.y]))
+            terrain = terrain + "          Biome : %s" % (eval_biome(world[player.x][player.y]))
         elif(index == 5):
             # tell coords
             terrain = terrain + "          X, Z : %s, %s" % (player.x, player.y)
@@ -154,7 +163,10 @@ def format_terrain_lines(index, world, terrain, viewLen):
                 for key in jsonInv:
                     inventoryArray.append("%s %s" % (str(jsonInv[key]), str(key)))
 
-                terrain = terrain + "              %s" % inventoryArray[index - 8]
+                if(index - 8 == Variables.currentlyUsing):
+                    terrain = terrain + "            > %s" % inventoryArray[index - 8]
+                else:
+                    terrain = terrain + "              %s" % inventoryArray[index - 8]
             except:
                 pass
         else:
@@ -164,8 +176,7 @@ def format_terrain_lines(index, world, terrain, viewLen):
     except re.error:
         return terrain
 
-def eval_tile(tile):
-
+def eval_biome(tile):
     # eval biomes
     if(tile == "X"):
         # out of bounds
@@ -200,8 +211,39 @@ def eval_tile(tile):
     elif(tile == "A"):
         # snowy mountains tile
         return "snowy_mountains"
+    elif(tile == "U"):
+        # fabric of time tile
+        return "fabric_of_time"
+
+def eval_tile(tile):
+
+    # eval biomes
+    if(tile == "X"):
+        # out of bounds
+        return "OOB"
+    elif(tile == "W"):
+        # water tile
+        return "water"
+    elif(tile == "S"):
+        # sand tile
+        return "sand"
+    elif(tile == "P" or tile == "Q" or tile == "F"):
+        # swamp tile
+        return "dirt"
+    elif(tile == "T"):
+        # taiga tile
+        return "podzol"
+    elif(tile == "H" or tile == "M"):
+        # hills tile
+        return "stone"
+    elif(tile == "Y" or tile == "A"):
+        # snowy plains tile
+        return "snow"
 
     # eval other tiles
+    if(tile == "U"):
+        # fabric of time
+        return "FOT"
     if(tile == "%"):
         return "tree"
 

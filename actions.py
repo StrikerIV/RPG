@@ -1,9 +1,95 @@
 import time
 import json
 import utils
+import random
 import numpy as np
 from pathlib import Path
 
+def destroy():
+    # get currently "equipped" block
+    player = utils.Variables.playerPosition
+    world = utils.Variables.world
+
+    inventoryArray = []
+    jsonInv = json.loads(json.dumps(utils.Variables.inventory))
+
+    for key in jsonInv:
+        inventoryArray.append("%s %s" % (str(jsonInv[key]), str(key)))
+
+    equipped = inventoryArray[utils.Variables.currentlyUsing]
+    amount = int(equipped.split(" ")[0].strip())
+    block = equipped.split(" ")[1].strip()
+
+    if(amount <= 0): return
+    
+    # set tile to block
+    if(block == "stone"):
+        world[player.x][player.y] = "H"
+    elif(block == "dirt"):
+        world[player.x][player.y] = "P"
+    elif(block == "podzol"):
+        world[player.x][player.y] = "T"        
+    elif(block == "snow"):
+        world[player.x][player.y] = "Y"    
+    elif(block == "sand"):
+        world[player.x][player.y] = "S"
+    elif(block == "logs"): 
+        world[player.x][player.y] = "I"       
+
+    # then remove item from inventory that was placed
+    utils.Variables.inventory[block] -= 1
+
+def place():
+    # use key
+    # evaluate tile beneath the player to know what to do
+    player = utils.Variables.playerPosition
+    world = utils.Variables.world
+    tileBelowPlayer = utils.eval_tile(world[player.x][player.y])
+
+    if(tileBelowPlayer == "tree"):
+        # use key on tree, we chop 
+        # add logs to inventory then remove tree
+        utils.Variables.inventory['logs'] += random.randint(3, 4)
+
+        # then reset tile as tree is gone
+        world[player.x][player.y] = "F"
+        utils.Variables.world = world
+        return False
+    elif(tileBelowPlayer == "sand"):
+        # on sand tile, dig & give to player
+        utils.Variables.inventory['sand'] += 1
+
+        world[player.x][player.y] = "U"
+        utils.Variables.world = world
+        return False
+    elif(tileBelowPlayer == "dirt"):
+        # on sand tile, dig & give to player
+        utils.Variables.inventory['dirt'] += 1
+
+        world[player.x][player.y] = "U"
+        utils.Variables.world = world
+        return False
+    elif(tileBelowPlayer == "podzol"):
+        # on sand tile, dig & give to player
+        utils.Variables.inventory['podzol'] += 1
+
+        world[player.x][player.y] = "U"
+        utils.Variables.world = world
+        return False
+    elif(tileBelowPlayer == "stone"):
+        # on sand tile, dig & give to player
+        utils.Variables.inventory['stone'] += 1
+
+        world[player.x][player.y] = "U"
+        utils.Variables.world = world
+        return False
+    elif(tileBelowPlayer == "snow"):
+        # on sand tile, dig & give to player
+        utils.Variables.inventory['snow'] += 1
+
+        world[player.x][player.y] = "U"
+        utils.Variables.world = world
+        return False
 def move(args, world):
     # this is the function that actually moves the character around
     # it's quite simple, depending on where they move we edit the x / y values 
