@@ -63,28 +63,28 @@ def place():
         utils.Variables.world = world
         return False
     elif(tileBelowPlayer == "dirt"):
-        # on sand tile, dig & give to player
+        # on dirt tile, dig & give to player
         utils.Variables.inventory['dirt'] += 1
 
         world[player.x][player.y] = "U"
         utils.Variables.world = world
         return False
     elif(tileBelowPlayer == "podzol"):
-        # on sand tile, dig & give to player
+        # on podzol tile, dig & give to player
         utils.Variables.inventory['podzol'] += 1
 
         world[player.x][player.y] = "U"
         utils.Variables.world = world
         return False
     elif(tileBelowPlayer == "stone"):
-        # on sand tile, dig & give to player
+        # on stone tile, mine & give to player
         utils.Variables.inventory['stone'] += 1
 
         world[player.x][player.y] = "U"
         utils.Variables.world = world
         return False
     elif(tileBelowPlayer == "snow"):
-        # on sand tile, dig & give to player
+        # on snow tile, dig & give to player
         utils.Variables.inventory['snow'] += 1
 
         world[player.x][player.y] = "U"
@@ -131,7 +131,6 @@ def move(args, world):
         return True
     elif(args[1] == "right"):
         # input was to move "right"
-        print(playerY)
         if(playerY + 1 == 500):
             # out of bounds
             return True

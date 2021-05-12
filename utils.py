@@ -62,7 +62,7 @@ def get_terrain_around_player(send, world, player):
     pX = player.x
     pY = player.y
 
-    viewAroundPlayer = 10
+    viewAroundPlayer = 7
     aroundPlayerGridHeight = (viewAroundPlayer * 2) + 1
     aroundPlayerGridWidth = (viewAroundPlayer * 2) + 1
     aroundPlayerArray = np.tile("X", (aroundPlayerGridHeight, aroundPlayerGridWidth))
